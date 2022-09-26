@@ -1,5 +1,13 @@
 ---
 Description: "AWS Glue Job Copy Between buckets"
+Parameters:
+  source_bucket:
+    Type: String
+    Default: s3://metricsdev-src-bucket
+  name_script:
+    Type: String
+    Default: sync.py
+
 Resources:
   MyJobRole:
     Type: AWS::IAM::Role
@@ -35,7 +43,7 @@ Resources:
       Command:
         Name: "pythonshell" 
         PythonVersion: "3"
-        ScriptLocation: "s3://metricsdev-src-bucket/sync.py"
+        ScriptLocation: "${source_bucket}/${name_script}"
       Description: "Job para sync entre buckets s3"
       ExecutionProperty: 
         MaxConcurrentRuns: 1
