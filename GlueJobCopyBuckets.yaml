@@ -1,0 +1,66 @@
+---
+Description: "AWS Glue Job Copy Between buckets"
+Resources:
+  MyJobRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Effect: "Allow"
+            Principal:
+              Service:
+                - "glue.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Path: "/"
+      Policies:
+        -
+          PolicyName: "managment-buckets"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              -
+                Effect: "Allow"
+                Action: [
+                  "s3:*",
+                  "glue:*"
+                ]
+                Resource: "*"
+ 
+  GlueJobCopyBuckets:
+    Type: AWS::Glue::Job
+    Properties: 
+      Command:
+        Name: "pythonshell" 
+        PythonVersion: "3"
+        ScriptLocation: "s3://metricsdev-src-bucket/sync.py"
+      Description: "Job para sync entre buckets s3"
+      ExecutionProperty: 
+        MaxConcurrentRuns: 1
+      MaxRetries: 3
+      Name: "cf-job-copy-between-s3"
+      Role: !Ref MyJobRole
+      Tags:
+        {
+          "Key" : gluejob,
+          "Value" : GlueJobCopy
+        }
+
+      Timeout: 2880
+
+  GlueJobTrigger:
+    Type: AWS::Glue::Trigger
+    Properties: 
+      Type: SCHEDULED
+      Actions: 
+        - JobName: cf-job-copy-between-s3
+      Description: "agendamento disparo de sync de buckets"
+      Name: copybuckets-schedule-gluejob
+      Schedule: cron(0/5 * * * ? *)
+      StartOnCreation: true
+      Tags: {
+          "Key" : gluejobschedule,
+          "Value" : GlueJob_agendamento
+        }
