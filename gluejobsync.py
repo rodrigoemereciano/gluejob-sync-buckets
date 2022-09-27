@@ -1,12 +1,13 @@
 import boto3
 
 file_path = 'tbff20001_metrica/'
+source_path = 'anomesdia=20220927/'
 s3 = boto3.resource('s3')
 source_bucket = s3.Bucket('metricsdev-src-bucket')
 destination_bucket = s3.Bucket('metricsdev-dst-bucket')
 destination_keys = [object.key for object in destination_bucket.objects.all()]
 for object in source_bucket.objects.all():
-  if (object.key not in destination_keys):
+  if ( source_path+object.key not in destination_keys):
     copy_source = {
         'Bucket': 'metricsdev-src-bucket',
         'Key': object.key
