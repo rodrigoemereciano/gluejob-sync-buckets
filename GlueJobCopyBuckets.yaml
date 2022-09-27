@@ -6,7 +6,7 @@ Parameters:
     Default: s3://metricsdev-src-bucket
   name_script:
     Type: String
-    Default: sync.py
+    Default: gluejobsync.py
 
 Resources:
   MyJobRole:
