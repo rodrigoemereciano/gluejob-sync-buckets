@@ -68,7 +68,3 @@ Resources:
       Name: copybuckets-schedule-gluejob
       Schedule: cron(0/5 * * * ? *)
       StartOnCreation: true
-      Tags: {
-          "Key" : gluejobschedule,
-          "Value" : GlueJob_agendamento
-        }
